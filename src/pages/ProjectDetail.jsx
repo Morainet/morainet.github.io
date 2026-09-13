@@ -11,6 +11,7 @@ export default function ProjectDetail() {
   useTitle(project ? project.title : '未找到')
 
   if (!project) {
+    return (
       <section className="section">
         <h1>未找到该项目</h1>
         <p className="empty">链接可能已失效，或该项目尚未公开。</p>
