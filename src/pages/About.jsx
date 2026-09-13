@@ -16,9 +16,18 @@ export default function About() {
 
       <h2>如何新增一个项目</h2>
       <p>
-        在 <code>src/data/projects.js</code> 中新增一个对象（包含 slug / title / icon / tagline /
-        description / status / tags / repo / featured / order / body），保存并推送即可自动出现在首页与列表。
+        在 <code>src/data/projects.js</code> 中新增一个对象，关键字段：
       </p>
+      <ul>
+        <li><code>slug / title / icon / tagline / description</code>：基础信息；</li>
+        <li><code>status</code>：可选「活跃 / 开发中 / 实验中」，决定状态标签颜色；</li>
+        <li><code>tags</code>：标签数组，用于列表筛选与首页技术方向聚合；</li>
+        <li><code>highlights</code>：核心特性清单（字符串数组）；</li>
+        <li><code>tech</code>：技术栈（字符串数组，详情页以徽章展示）；</li>
+        <li><code>repo</code> / <code>demo</code>：仓库与演示链接（demo 留空则不展示）；</li>
+        <li><code>featured / order / body</code>：是否重点推进、排序、详情页正文（支持 HTML）。</li>
+      </ul>
+      <p>保存并推送即可自动出现在首页与列表，无需改动其他文件。</p>
 
       <p>
         <a href="https://github.com/Morainet" target="_blank" rel="noopener">

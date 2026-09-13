@@ -32,10 +32,13 @@ npm run preview  # 本地预览构建产物
   tagline: '一句话简介',
   description: '卡片与列表用的简短描述',
   status: '活跃',            // 活跃 / 开发中 / 实验中（决定状态标签颜色）
-  tags: ['标签1', '标签2'],
+  tags: ['标签1', '标签2'],  // 用于列表筛选与首页技术方向聚合
   repo: 'https://github.com/Morainet/my-project',
+  demo: '',                 // 演示链接，留空则不展示
   featured: true,           // true 会出现在首页「精选项目」
   order: 5,                 // 排序，越小越靠前
+  highlights: ['核心特性一', '核心特性二'],  // 详情页特性清单
+  tech: ['React', 'Rust'],  // 详情页技术栈徽章
   body: '<h2>项目介绍</h2><p>详情页正文（支持 HTML）</p>',
 }
 ```
