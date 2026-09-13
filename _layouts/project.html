@@ -1,0 +1,21 @@
+---
+layout: default
+---
+<section class="section project-detail">
+  <div class="project-head">
+    <div class="project-icon">{{ page.icon }}</div>
+    <div>
+      <h1>{{ page.title }}</h1>
+      <p class="card-tagline">{{ page.tagline }}</p>
+    </div>
+  </div>
+  <div class="project-meta">
+    <span class="status status-{{ page.status }}">{{ page.status }}</span>
+    {% for t in page.tags %}<span class="tag">{{ t }}</span>{% endfor %}
+    {% if page.repo %}<a class="btn-outline" href="{{ page.repo }}" target="_blank" rel="noopener">查看仓库 ↗</a>{% endif %}
+  </div>
+  <div class="content">
+    {{ content }}
+  </div>
+  <p class="back"><a href="{{ '/projects/' | relative_url }}">← 返回项目列表</a></p>
+</section>

@@ -1,0 +1,15 @@
+---
+layout: default
+title: 项目
+permalink: /projects/
+---
+<section class="section">
+  <h1>我们的项目</h1>
+  <p class="lead">{{ site.org.description }}</p>
+  <div class="grid">
+    {% assign sorted = site.projects | sort: "order" %}
+    {% for p in sorted %}
+      {% include project_card.html project=p %}
+    {% endfor %}
+  </div>
+</section>
