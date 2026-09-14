@@ -1,0 +1,57 @@
+---
+import '../styles/global.css'
+import Nav from '../components/Nav.astro'
+import Footer from '../components/Footer.astro'
+
+interface Props {
+  title?: string
+  description?: string
+}
+
+const {
+  title,
+  description = 'Morainet 项目介绍平台 —— 组织内各项目的详细介绍、技术栈与进展。',
+} = Astro.props
+
+// 单项目独立构建时(scripts/build-project.mjs)为 true
+const standalone = Boolean(process.env.PROJECT_SLUG)
+
+const siteName = 'Morainet'
+const fullTitle = title ? `${title} · ${siteName}` : `${siteName} · 项目介绍`
+const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site) : Astro.url
+---
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <script is:inline>
+      // 首屏绘制前设置主题,避免闪烁:用户手动选择优先,否则跟随系统
+      ;(function () {
+        var saved = localStorage.getItem('morainet-theme')
+        var theme =
+          saved === 'light' || saved === 'dark'
+            ? saved
+            : window.matchMedia('(prefers-color-scheme: dark)').matches
+              ? 'dark'
+              : 'light'
+        document.documentElement.dataset.theme = theme
+      })()
+    </script>
+  </head>
+  <body>
+    <Nav standalone={standalone} />
+    <main class="container">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

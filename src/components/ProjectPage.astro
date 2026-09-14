@@ -1,0 +1,96 @@
+---
+// 项目详情视图:整站 /projects/<slug>/ 与单项目独立站的首页共用。
+// 正文 Markdown 通过 <slot /> 传入。
+import type { CollectionEntry } from 'astro:content'
+
+interface Props {
+  project: CollectionEntry<'projects'>
+  /** 完整站点时的全部项目,用于上/下篇导航 */
+  all: CollectionEntry<'projects'>[]
+  /** 单项目独立部署:隐藏上/下篇与返回列表 */
+  standalone?: boolean
+}
+
+const { project, all, standalone = false } = Astro.props
+const meta = project.data
+const sorted = [...all].sort((a, b) => a.data.order - b.data.order)
+const index = sorted.findIndex((p) => p.id === project.id)
+const prev = !standalone && index > 0 ? sorted[index - 1] : null
+const next = !standalone && index < sorted.length - 1 ? sorted[index + 1] : null
+---
+<section class="section project-detail">
+  <div class="project-head">
+    <div class="project-icon">{meta.icon}</div>
+    <div>
+      <h1>{meta.title}</h1>
+      <p class="card-tagline">{meta.tagline}</p>
+    </div>
+  </div>
+
+  <div class="project-meta">
+    <span class={`status status-${meta.status}`}>{meta.status}</span>
+    {meta.repo && <a class="btn-outline" href={meta.repo} target="_blank" rel="noopener">查看仓库 ↗</a>}
+    {meta.demo && <a class="btn-outline" href={meta.demo} target="_blank" rel="noopener">在线演示 ↗</a>}
+  </div>
+
+  <p class="project-desc">{meta.description}</p>
+
+  {
+    meta.highlights.length > 0 && (
+      <div class="block">
+        <h2>核心特性</h2>
+        <ul class="highlight-list">
+          {meta.highlights.map((h) => (
+            <li>{h}</li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
+
+  {
+    meta.tech.length > 0 && (
+      <div class="block">
+        <h2>技术栈</h2>
+        <div class="tech-badges">
+          {meta.tech.map((t) => (
+            <span class="tech-badge">{t}</span>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  <div class="content">
+    <slot />
+  </div>
+
+  {
+    (prev || next) && (
+      <nav class="proj-nav">
+        {prev ? (
+          <a href={`/projects/${prev.id}/`} class="proj-nav-item prev">
+            <span class="proj-nav-label">← 上一个</span>
+            <span class="proj-nav-title">{prev.data.title}</span>
+          </a>
+        ) : (
+          <span />
+        )}
+        {next ? (
+          <a href={`/projects/${next.id}/`} class="proj-nav-item next">
+            <span class="proj-nav-label">下一个 →</span>
+            <span class="proj-nav-title">{next.data.title}</span>
+          </a>
+        ) : (
+          <span />
+        )}
+      </nav>
+    )
+  }
+
+  {!standalone && (
+    <p class="back">
+      <a href="/">← 返回项目列表</a>
+    </p>
+  )}
+</section>

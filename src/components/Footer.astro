@@ -1,0 +1,15 @@
+---
+import { MAIN_SITE_URL, GITHUB_ORG_URL } from '../config'
+
+const year = new Date().getFullYear()
+---
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <p>© {year} Morainet. 由 GitHub Pages 构建。</p>
+    <p>
+      <a href={MAIN_SITE_URL} target="_blank" rel="noopener">主站 ↗</a>
+      ·
+      <a href={GITHUB_ORG_URL} target="_blank" rel="noopener">GitHub 组织 ↗</a>
+    </p>
+  </div>
+</footer>

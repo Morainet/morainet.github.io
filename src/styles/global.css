@@ -45,11 +45,10 @@ a:hover { text-decoration: underline; }
 }
 .nav { display: flex; align-items: center; justify-content: space-between; height: 60px; }
 .brand { font-weight: 700; font-size: 1.2rem; color: var(--fg); }
-.nav-links { list-style: none; display: flex; gap: 22px; margin: 0; padding: 0; align-items: center; }
+.nav-links { list-style: none; display: flex; gap: 22px; margin: 0; padding: 0; align-items: center; flex-wrap: wrap; }
 .nav-links a { color: var(--fg); font-weight: 500; }
 .nav-links a:hover { color: var(--accent); text-decoration: none; }
 .nav-links a.active { color: var(--accent); }
-.nav-toggle { display: none; background: none; border: 0; font-size: 1.4rem; cursor: pointer; }
 
 /* Theme toggle */
 .theme-toggle {
@@ -57,6 +56,9 @@ a:hover { text-decoration: underline; }
   padding: 4px 10px; cursor: pointer; font-size: 1rem; color: var(--fg); line-height: 1;
 }
 .theme-toggle:hover { border-color: var(--accent); }
+.theme-toggle .icon-sun { display: none; }
+[data-theme="dark"] .theme-toggle .icon-sun { display: inline; }
+[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
 
 /* Hero */
 .hero { padding: 72px 0 40px; text-align: center; }
@@ -87,6 +89,7 @@ a:hover { text-decoration: underline; }
 .card {
   border: 1px solid var(--border); border-radius: 12px; padding: 22px;
   background: var(--card); transition: box-shadow .2s, transform .2s;
+  position: relative;
 }
 .card:hover { box-shadow: 0 8px 24px rgba(0, 0, 0, .08); transform: translateY(-2px); }
 .card-icon { font-size: 2rem; margin-bottom: 8px; }
@@ -100,10 +103,14 @@ a:hover { text-decoration: underline; }
   padding: 3px 10px; border-radius: 999px;
 }
 .card-meta { display: flex; align-items: center; gap: 14px; font-size: .9rem; }
+.featured-mark {
+  position: absolute; top: 14px; right: 14px; font-size: 1rem; line-height: 1;
+}
 
-/* Status pill */
+/* Status pill（未知状态回退为灰色） */
 .status {
   font-size: .75rem; padding: 3px 10px; border-radius: 999px; font-weight: 600;
+  background: var(--border); color: var(--muted);
 }
 .status-活跃 { background: #dcfce7; color: #15803d; }
 .status-开发中 { background: #fef9c3; color: #a16207; }
@@ -117,6 +124,24 @@ a:hover { text-decoration: underline; }
 .content { max-width: 760px; }
 .content h2 { margin-top: 28px; }
 .back { margin-top: 32px; }
+
+/* Markdown 正文 */
+.content p { margin: 0 0 14px; }
+.content ul, .content ol { padding-left: 24px; margin: 0 0 14px; }
+.content code {
+  font-size: .9em; background: var(--accent-soft); color: var(--accent);
+  padding: 2px 6px; border-radius: 6px;
+}
+.content pre {
+  background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+  padding: 14px 16px; overflow-x: auto;
+}
+.content pre code { background: none; color: inherit; padding: 0; }
+.content img { max-width: 100%; border-radius: 10px; }
+.content blockquote {
+  margin: 0 0 14px; padding: 4px 16px; border-left: 3px solid var(--accent);
+  color: var(--muted); background: var(--accent-soft); border-radius: 0 8px 8px 0;
+}
 
 /* Filters / search */
 .filters { margin-bottom: 24px; }
@@ -139,20 +164,8 @@ a:hover { text-decoration: underline; }
 .footer-inner { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
 .site-footer a { color: var(--muted); }
 
-/* Responsive */
-@media (max-width: 640px) {
-  .nav-toggle { display: block; }
-  .nav-links {
-    display: none; position: absolute; top: 60px; left: 0; right: 0;
-    flex-direction: column; background: #fff; border-bottom: 1px solid var(--border); padding: 12px 20px; gap: 12px;
-  }
-  .nav-links.open { display: flex; }
-  .hero h1 { font-size: 2.2rem; }
-}
-
 /* Dark mode header overrides */
 [data-theme="dark"] .site-header { background: rgba(15, 17, 21, .85); }
-[data-theme="dark"] .nav-links.open { background: #161a21; }
 
 /* Stats strip */
 .stats {
@@ -203,7 +216,15 @@ a:hover { text-decoration: underline; }
 /* 404 */
 .notfound { text-align: center; padding: 64px 20px; }
 .notfound-code {
-  font-size: 5rem; font-weight: 900; color: var(--accent-soft);
-  color: var(--accent); line-height: 1; margin-bottom: 8px;
+  font-size: 5rem; font-weight: 900; color: var(--accent); line-height: 1; margin-bottom: 8px;
 }
 .notfound-actions { display: flex; gap: 12px; justify-content: center; margin-top: 20px; }
+
+/* Responsive */
+@media (max-width: 640px) {
+  .nav { gap: 12px; }
+  .nav-links { gap: 14px; }
+  .hero h1 { font-size: 2.2rem; }
+  .proj-nav { flex-direction: column; }
+  .proj-nav-item.next { text-align: left; align-items: flex-start; }
+}

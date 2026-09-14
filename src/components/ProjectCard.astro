@@ -1,0 +1,31 @@
+---
+import type { CollectionEntry } from 'astro:content'
+
+interface Props {
+  project: CollectionEntry<'projects'>
+}
+const { project } = Astro.props
+const meta = project.data
+const href = `/projects/${project.id}/`
+// 搜索/筛选用的数据,由首页脚本读取
+const searchText = [meta.title, meta.tagline, meta.description, ...meta.tags].join(' ')
+---
+<article
+  class="card"
+  data-project-card
+  data-tags={meta.tags.join('|')}
+  data-text={searchText}
+>
+  {meta.featured && <span class="featured-mark" title="重点推进">⭐</span>}
+  <div class="card-icon">{meta.icon}</div>
+  <h3><a href={href}>{meta.title}</a></h3>
+  <p class="card-tagline">{meta.tagline}</p>
+  <p class="card-desc">{meta.description}</p>
+  <div class="tags">
+    {meta.tags.map((t) => <span class="tag">{t}</span>)}
+  </div>
+  <div class="card-meta">
+    <span class={`status status-${meta.status}`}>{meta.status}</span>
+    {meta.repo && <a href={meta.repo} target="_blank" rel="noopener">仓库 ↗</a>}
+  </div>
+</article>

@@ -1,0 +1,21 @@
+---
+import { getCollection, render } from 'astro:content'
+import Base from '../../layouts/Base.astro'
+import ProjectPage from '../../components/ProjectPage.astro'
+
+export async function getStaticPaths() {
+  const all = await getCollection('projects')
+  // 单项目独立构建时只产出该项目页,其余页面照常跳过
+  const only = process.env.PROJECT_SLUG
+  const list = only ? all.filter((p) => p.id === only) : all
+  return list.map((project) => ({ params: { slug: project.id }, props: { project, all } }))
+}
+
+const { project, all } = Astro.props
+const { Content } = await render(project)
+---
+<Base title={project.data.title} description={project.data.description}>
+  <ProjectPage project={project} all={all}>
+    <Content />
+  </ProjectPage>
+</Base>
