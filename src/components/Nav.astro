@@ -1,23 +1,32 @@
 ---
 // 顶部导航。standalone 模式(单项目独立部署)下只保留本项目入口与外链。
 import { MAIN_SITE_URL, GITHUB_ORG_URL } from '../config'
+import { relToRoot, link } from '../lib/rel'
 
 interface Props {
   standalone?: boolean
 }
 const { standalone = false } = Astro.props
 const isHome = Astro.url.pathname === '/'
+const rel = relToRoot(Astro.url.pathname)
+const homeHref = link(rel, '')
 ---
 <header class="site-header">
   <nav class="nav container">
-    <a href="/" class="brand">Morainet</a>
+    <a href={homeHref} class="brand">
+      <svg width="22" height="22" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <path d="M16 4 28 26H4L16 4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"></path>
+        <path d="M9.5 17h13M7 21.5h18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
+      </svg>
+      <span>Morainet</span>
+    </a>
     <ul class="nav-links">
       <li>
         {
           standalone ? (
-            <a href="/">项目介绍</a>
+            <a href={homeHref}>项目介绍</a>
           ) : (
-            <a href="/" class={isHome ? 'active' : undefined} aria-current={isHome ? 'page' : undefined}>
+            <a href={homeHref} class={isHome ? 'active' : undefined} aria-current={isHome ? 'page' : undefined}>
               首页
             </a>
           )

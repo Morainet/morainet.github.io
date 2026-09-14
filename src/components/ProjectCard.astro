@@ -1,12 +1,13 @@
 ---
 import type { CollectionEntry } from 'astro:content'
+import { relToRoot, link } from '../lib/rel'
 
 interface Props {
   project: CollectionEntry<'projects'>
 }
 const { project } = Astro.props
 const meta = project.data
-const href = `/projects/${project.id}/`
+const href = link(relToRoot(Astro.url.pathname), `projects/${project.id}/`)
 // 搜索/筛选用的数据,由首页脚本读取
 const searchText = [meta.title, meta.tagline, meta.description, ...meta.tags].join(' ')
 ---

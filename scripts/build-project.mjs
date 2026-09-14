@@ -19,7 +19,7 @@ if (!slug) {
 }
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const result = spawnSync('npx', ['astro', 'build'], {
+const build = spawnSync('npx', ['astro', 'build'], {
   stdio: 'inherit',
   cwd: root,
   env: {
@@ -29,5 +29,13 @@ const result = spawnSync('npx', ['astro', 'build'], {
   },
   shell: process.platform === 'win32',
 })
+if (build.status !== 0) process.exit(build.status ?? 1)
 
-process.exit(result.status ?? 1)
+// 资源路径相对化,保证产物 file:// 直开也可用
+const relativize = spawnSync('node', [path.join('scripts', 'relativize.mjs')], {
+  stdio: 'inherit',
+  cwd: root,
+  env: { ...process.env, OUT_DIR: path.join('dist-project', slug) },
+  shell: process.platform === 'win32',
+})
+process.exit(relativize.status ?? 1)
