@@ -29,4 +29,6 @@ const searchText = [meta.title, meta.tagline, meta.description, ...meta.tags].jo
     <span class={`status status-${meta.status}`}>{meta.status}</span>
     {meta.repo && <a href={meta.repo} target="_blank" rel="noopener">仓库 ↗</a>}
   </div>
+  <!-- 整卡可点击:覆盖层拉伸链接,仓库外链通过 z-index 保持独立可点 -->
+  <a class="card-stretch" href={href} aria-label={`查看 ${meta.title} 详情`}></a>
 </article>
