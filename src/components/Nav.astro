@@ -1,15 +1,21 @@
 ---
 // 顶部导航。standalone 模式(单项目独立部署)下只保留本项目入口与外链。
+// 右侧:语言切换(中/EN)→ GitHub 图标 → 深浅色切换。
 import { MAIN_SITE_URL, GITHUB_ORG_URL } from '../config'
 import { relToRoot, link } from '../lib/rel'
+import { localeHref } from '../lib/i18n'
+import { t, type Locale } from '../i18n/ui'
 
 interface Props {
   standalone?: boolean
 }
 const { standalone = false } = Astro.props
-const isHome = Astro.url.pathname === '/'
+const isHome = Astro.url.pathname === '/' || Astro.url.pathname === '/en/'
+const locale = (Astro.currentLocale as Locale | undefined) ?? 'zh'
+const i = t(locale)
 const rel = relToRoot(Astro.url.pathname)
-const homeHref = link(rel, '')
+const homeHref = link(rel, locale === 'en' ? 'en/' : '')
+const altHref = localeHref(Astro.url.pathname, locale === 'zh' ? 'en' : 'zh')
 ---
 <header class="site-header">
   <nav class="nav container">
@@ -24,17 +30,26 @@ const homeHref = link(rel, '')
       <li>
         {
           standalone ? (
-            <a href={homeHref}>项目介绍</a>
+            <a href={homeHref}>{i['nav.standaloneHome']}</a>
           ) : (
             <a href={homeHref} class={isHome ? 'active' : undefined} aria-current={isHome ? 'page' : undefined}>
-              首页
+              {i['nav.home']}
             </a>
           )
         }
       </li>
-      <li><a href={MAIN_SITE_URL} target="_blank" rel="noopener">主站 ↗</a></li>
+      <li><a href={MAIN_SITE_URL} target="_blank" rel="noopener">{i['nav.mainSite']} ↗</a></li>
+      {
+        !standalone && (
+          <li>
+            <a class="lang-switch" href={altHref} aria-label={i['nav.langSwitch']} title={i['nav.langSwitch']}>
+              {locale === 'zh' ? 'EN' : '中文'}
+            </a>
+          </li>
+        )
+      }
       <li>
-        <a class="nav-icon" href={GITHUB_ORG_URL} target="_blank" rel="noopener" aria-label="GitHub 组织" title="GitHub 组织">
+        <a class="nav-icon" href={GITHUB_ORG_URL} target="_blank" rel="noopener" aria-label={i['nav.github']} title={i['nav.github']}>
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path
               d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"
@@ -46,7 +61,7 @@ const homeHref = link(rel, '')
         </a>
       </li>
       <li>
-        <button class="theme-toggle nav-icon" aria-label="切换深色/浅色模式" title="切换深色/浅色模式">
+        <button class="theme-toggle nav-icon" aria-label={i['nav.themeToggle']} title={i['nav.themeToggle']}>
           <svg class="icon-moon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
           </svg>

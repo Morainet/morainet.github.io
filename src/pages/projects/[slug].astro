@@ -1,19 +1,14 @@
 ---
-import { getCollection, render } from 'astro:content'
-import Base from '../../layouts/Base.astro'
-import ProjectPage from '../../components/ProjectPage.astro'
+// 项目详情页(中文,/projects/<slug>/)。
+import { getProjects } from '../../lib/i18n'
 import { onlyStandalone } from '../../lib/standalone'
+import ProjectView from '../../components/views/ProjectView.astro'
 
 export async function getStaticPaths() {
-  const all = await getCollection('projects')
+  const all = await getProjects('zh')
   return onlyStandalone(all).map((project) => ({ params: { slug: project.id }, props: { project, all } }))
 }
 
 const { project, all } = Astro.props
-const { Content } = await render(project)
 ---
-<Base title={project.data.title} description={project.data.description}>
-  <ProjectPage project={project} all={all}>
-    <Content />
-  </ProjectPage>
-</Base>
+<ProjectView locale="zh" project={project} all={all} />

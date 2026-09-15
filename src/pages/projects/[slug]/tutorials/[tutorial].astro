@@ -1,75 +1,22 @@
 ---
-// 单篇教程页:/projects/<slug>/tutorials/<name>/。
-// 上/下篇在同一项目的教程集合内轮转。
-import { getCollection, render } from 'astro:content'
-import Base from '../../../../layouts/Base.astro'
-import { link, relToRoot } from '../../../../lib/rel'
+// 单篇教程页(中文,/projects/<slug>/tutorials/<name>/)。
+import { getProjects, getTutorials } from '../../../../lib/i18n'
 import { onlyStandalone } from '../../../../lib/standalone'
+import TutorialView from '../../../../components/views/TutorialView.astro'
 
 export async function getStaticPaths() {
-  const all = await getCollection('projects')
-  const tutorials = await getCollection('tutorials')
+  const [all, tutorials] = await Promise.all([getProjects('zh'), getTutorials('zh')])
   return onlyStandalone(all).flatMap((project) => {
     const own = tutorials
-      .filter((t) => t.id.startsWith(`${project.id}/`))
+      .filter((x) => x.id.startsWith(`${project.id}/`))
       .sort((a, b) => a.data.order - b.data.order)
-    return own.map((tutorial, i) => ({
+    return own.map((tutorial, idx) => ({
       params: { slug: project.id, tutorial: tutorial.id.split('/').slice(1).join('/') },
-      props: { project, tutorial, prev: own[i - 1] ?? null, next: own[i + 1] ?? null },
+      props: { project, tutorial, prev: own[idx - 1] ?? null, next: own[idx + 1] ?? null },
     }))
   })
 }
 
 const { project, tutorial, prev, next } = Astro.props
-const { Content } = await render(tutorial)
-const rel = relToRoot(Astro.url.pathname)
-const listHref = link(rel, `projects/${project.id}/tutorials/`)
-const projectHref = link(rel, `projects/${project.id}/`)
-const tutorialHref = (t) =>
-  link(rel, `projects/${project.id}/tutorials/${t.id.split('/').slice(1).join('/')}/`)
 ---
-<Base
-  title={`${tutorial.data.title} · ${project.data.title} 教程`}
-  description={tutorial.data.description ?? `${project.data.title} 教程:${tutorial.data.title}`}
->
-  <section class="section project-detail tutorial-detail">
-    <header class="project-hero">
-      <p class="kicker">{project.data.title} · 教程</p>
-      <h1>{tutorial.data.title}</h1>
-      {tutorial.data.description && <p class="project-desc">{tutorial.data.description}</p>}
-    </header>
-
-    <div class="content">
-      <Content />
-    </div>
-
-    {
-      (prev || next) && (
-        <nav class="proj-nav">
-          {prev ? (
-            <a href={tutorialHref(prev)} class="proj-nav-item prev">
-              <span class="proj-nav-label">← 上一篇</span>
-              <span class="proj-nav-title">{prev.data.title}</span>
-            </a>
-          ) : (
-            <span />
-          )}
-          {next ? (
-            <a href={tutorialHref(next)} class="proj-nav-item next">
-              <span class="proj-nav-label">下一篇 →</span>
-              <span class="proj-nav-title">{next.data.title}</span>
-            </a>
-          ) : (
-            <span />
-          )}
-        </nav>
-      )
-    }
-
-    <p class="back">
-      <a href={listHref}>← 全部教程</a>
-      <span aria-hidden="true"> · </span>
-      <a href={projectHref}>{project.data.title} 介绍</a>
-    </p>
-  </section>
-</Base>
+<TutorialView locale="zh" project={project} tutorial={tutorial} prev={prev} next={next} />

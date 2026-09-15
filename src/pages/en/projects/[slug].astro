@@ -1,0 +1,15 @@
+---
+// 项目详情页(英文,/en/projects/<slug>/)。
+import { getProjects } from '../../../lib/i18n'
+import ProjectView from '../../../components/views/ProjectView.astro'
+
+export async function getStaticPaths() {
+  // 单项目独立构建仅产出中文站,跳过英文页
+  if (process.env.PROJECT_SLUG) return []
+  const all = await getProjects('en')
+  return all.map((project) => ({ params: { slug: project.id }, props: { project, all } }))
+}
+
+const { project, all } = Astro.props
+---
+<ProjectView locale="en" project={project} all={all} />

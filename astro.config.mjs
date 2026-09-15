@@ -8,4 +8,10 @@ export default defineConfig({
   output: 'static',
   // 单项目独立构建时由 scripts/build-project.mjs 指定输出目录
   outDir: process.env.OUT_DIR || 'dist',
+  // 多语言:中文为默认语言(URL 不带前缀),英文挂 /en/ 下
+  i18n: {
+    defaultLocale: 'zh',
+    locales: ['zh', 'en'],
+    prefixDefaultLocale: false,
+  },
 })

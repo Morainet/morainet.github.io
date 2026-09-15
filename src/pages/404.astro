@@ -1,17 +1,19 @@
 ---
+// 404 页面:全站只有一份 404.html(Astro 静态产物约定),文案中英并列。
 import Base from '../layouts/Base.astro'
 import { relToRoot, link } from '../lib/rel'
 
 const rel = relToRoot(Astro.url.pathname)
 ---
-<Base title="页面不存在">
+<Base title="页面不存在 · Page Not Found">
   <section class="section notfound">
     <div class="notfound-code">404</div>
-    <h1>页面走丢了</h1>
-    <p class="empty">你访问的地址不存在，或该项目尚未公开。</p>
+    <h1>页面走丢了 · Page not found</h1>
+    <p class="empty">你访问的地址不存在,或该项目尚未公开。</p>
+    <p class="empty">The page you are looking for does not exist, or the project is not published yet.</p>
     <div class="notfound-actions">
-      <a href={link(rel, '')} class="btn">回到首页</a>
-      <a href={link(rel, 'projects/')} class="btn-outline">浏览项目</a>
+      <a href={link(rel, '')} class="btn">回到首页 / Home</a>
+      <a href={link(rel, 'projects/')} class="btn-outline">浏览项目 / Projects</a>
     </div>
   </section>
 </Base>

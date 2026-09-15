@@ -1,0 +1,11 @@
+---
+// 英文首页(挂 /en/)。用 catch-all 形式使 getStaticPaths 生效,
+// 单项目独立构建(仅中文)时返回空数组即可跳过本页。
+import HomeView from '../../components/views/HomeView.astro'
+
+export async function getStaticPaths() {
+  if (process.env.PROJECT_SLUG) return []
+  return [{ params: { slug: undefined } }]
+}
+---
+<HomeView locale="en" />

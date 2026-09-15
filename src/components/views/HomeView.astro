@@ -1,0 +1,151 @@
+---
+// 首页视图:zh(整站根)与 en(/en)两种语言共用。
+// 单项目独立构建(PROJECT_SLUG)时直接渲染该项目详情页。
+import { render } from 'astro:content'
+import Base from '../../layouts/Base.astro'
+import ProjectCard from '../ProjectCard.astro'
+import ProjectPage from '../ProjectPage.astro'
+import { MAIN_SITE_URL } from '../../config'
+import { t, type Locale } from '../../i18n/ui'
+import { getProjects } from '../../lib/i18n'
+
+interface Props {
+  locale: Locale
+}
+
+const { locale } = Astro.props
+const i = t(locale)
+
+const all = await getProjects(locale)
+const sorted = [...all].sort((a, b) => a.data.order - b.data.order)
+const featured = sorted.filter((p) => p.data.featured)
+
+// 技术方向聚合(标签 + 计数)
+const tagCount: Record<string, number> = {}
+for (const p of all) {
+  for (const tag of p.data.tags) tagCount[tag] = (tagCount[tag] ?? 0) + 1
+}
+const directions = Object.entries(tagCount).sort((a, b) => b[1] - a[1])
+const allTags = [...new Set(all.flatMap((p) => p.data.tags))].sort()
+
+let standaloneProject: (typeof all)[number] | undefined
+let StandaloneContent: Awaited<ReturnType<typeof render>>['Content'] | undefined
+if (process.env.PROJECT_SLUG) {
+  standaloneProject = all.find((p) => p.id === process.env.PROJECT_SLUG)
+  if (!standaloneProject) {
+    throw new Error(
+      `PROJECT_SLUG="${process.env.PROJECT_SLUG}" 没有对应的项目目录(src/content/projects/${process.env.PROJECT_SLUG}/)`,
+    )
+  }
+  ;({ Content: StandaloneContent } = await render(standaloneProject))
+}
+
+const pageTitle = standaloneProject ? standaloneProject.data.title : undefined
+const pageDescription = standaloneProject ? standaloneProject.data.description : i['site.description']
+---
+<Base title={pageTitle} description={pageDescription}>
+  {
+    standaloneProject && StandaloneContent ? (
+      <ProjectPage project={standaloneProject} all={all} standalone locale={locale}>
+        <StandaloneContent />
+      </ProjectPage>
+    ) : (
+      <>
+        <section class="hero">
+          <h1>Morainet</h1>
+          <p class="tagline">{i['site.tagline']}</p>
+          <p class="lead">
+            {i['home.lead']}
+            <a href={MAIN_SITE_URL} target="_blank" rel="noopener">{i['home.mainSiteWord']}</a>。
+          </p>
+          <a href="#projects" class="btn">{i['home.browse']}</a>
+        </section>
+
+        <section class="stats">
+          <div class="stat">
+            <span class="stat-num">{all.length}</span>
+            <span class="stat-label">{i['home.statProjects']}</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num">{directions.length}</span>
+            <span class="stat-label">{i['home.statDirections']}</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num">{featured.length}</span>
+            <span class="stat-label">{i['home.statFeatured']}</span>
+          </div>
+        </section>
+
+        <section class="section container">
+          <h2>{i['home.directionsTitle']}</h2>
+          <div class="tag-cloud">
+            {directions.map(([tag, count]) => (
+              <span class="cloud-chip" title={`${count} ${i['home.countProjects']}`}>
+                {tag}
+                <sup>{count}</sup>
+              </span>
+            ))}
+          </div>
+        </section>
+
+        <section id="projects" class="section container">
+          <h2>{i['home.projectsTitle']}</h2>
+          <div class="filters">
+            <input class="search" type="search" placeholder={i['home.searchPlaceholder']} aria-label={i['home.searchLabel']} />
+            <div class="tag-filters">
+              {[i['home.allTag'], ...allTags].map((tag) => (
+                <button class:list={['chip', { 'chip-active': tag === i['home.allTag'] }]} data-tag={tag}>
+                  {tag}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div class="grid">
+            {sorted.map((p) => (
+              <ProjectCard project={p} locale={locale} />
+            ))}
+          </div>
+          <p class="empty" data-filter-empty hidden>{i['home.noMatch']}</p>
+        </section>
+      </>
+    )
+  }
+</Base>
+
+{
+  !process.env.PROJECT_SLUG && (
+    <script>
+      // 首页项目筛选 + 搜索(纯前端,无框架)
+      const search = document.querySelector<HTMLInputElement>('.search')
+      const chips = [...document.querySelectorAll<HTMLButtonElement>('.tag-filters .chip')]
+      const cards = [...document.querySelectorAll<HTMLElement>('[data-project-card]')]
+      const empty = document.querySelector('[data-filter-empty]')
+      // 第一个 chip 恒为「全部」(文案随语言变化,取值不硬编码)
+      const allTag = chips[0]?.dataset.tag ?? ''
+      let activeTag = allTag
+
+      function applyFilter() {
+        const q = (search?.value ?? '').trim().toLowerCase()
+        let visible = 0
+        for (const card of cards) {
+          const okTag = activeTag === allTag || (card.dataset.tags ?? '').split('|').includes(activeTag)
+          const okQuery = q === '' || (card.dataset.text ?? '').toLowerCase().includes(q)
+          const show = okTag && okQuery
+          card.style.display = show ? '' : 'none'
+          if (show) visible++
+        }
+        empty?.toggleAttribute('hidden', visible > 0)
+      }
+
+      search?.addEventListener('input', applyFilter)
+      chips.forEach((chip) => {
+        chip.addEventListener('click', () => {
+          activeTag = chip.dataset.tag ?? allTag
+          chips.forEach((c) => c.classList.toggle('chip-active', c === chip))
+          applyFilter()
+        })
+      })
+    </script>
+  )
+}

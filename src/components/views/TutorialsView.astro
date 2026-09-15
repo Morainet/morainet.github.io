@@ -1,0 +1,65 @@
+---
+// 项目教程列表视图:每个项目都预留 /projects/<slug>/tutorials/,
+// 尚无教程时显示"整理中"占位。新增教程 = 在项目目录下
+// src/content/projects/<slug>/tutorials/ 新建 .md(en 加 .en 后缀),无需改动代码。
+import Base from '../../layouts/Base.astro'
+import { link, relToRoot } from '../../lib/rel'
+import { pathFor } from '../../lib/i18n'
+import { t, type Locale } from '../../i18n/ui'
+
+interface Props {
+  locale: Locale
+  project: import('astro:content').CollectionEntry<'projects'>
+  tutorials: import('astro:content').CollectionEntry<'tutorials'>[]
+}
+
+const { locale, project, tutorials } = Astro.props
+const i = t(locale)
+const rel = relToRoot(Astro.url.pathname)
+const projectHref = link(rel, pathFor(locale, `projects/${project.id}/`))
+const tutorialHref = (x) => {
+  const name = x.id.split('/').slice(1).join('/')
+  return link(rel, pathFor(locale, `projects/${project.id}/tutorials/${name}/`))
+}
+---
+<Base title={`${project.data.title} ${i['tutorials.title']}`} description={`${project.data.title} ${i['tutorials.lead']}`}>
+  <section class="section project-detail tutorial-detail">
+    <header class="project-hero">
+      <p class="kicker">{project.data.title} · {i['tutorials.kickerSuffix']}</p>
+      <h1>{i['tutorials.title']}</h1>
+      <p class="project-desc">{project.data.title} {i['tutorials.lead']}</p>
+    </header>
+
+    {
+      tutorials.length > 0 ? (
+        <ol class="tutorial-list">
+          {tutorials.map((x, idx) => (
+            <li class="tutorial-item">
+              <a href={tutorialHref(x)}>
+                <span class="tutorial-row">
+                  <span class="tutorial-num">{String(idx + 1).padStart(2, '0')}</span>
+                  <span class="tutorial-title">{x.data.title}</span>
+                  <span class="tutorial-arrow" aria-hidden="true">→</span>
+                </span>
+                {x.data.description && <span class="tutorial-desc">{x.data.description}</span>}
+              </a>
+            </li>
+          ))}
+        </ol>
+      ) : (
+        <p class="empty tutorial-empty">
+          {i['tutorials.empty']}
+          {project.data.repo && (
+            <>
+              {i['tutorials.emptyPrefix']}
+              <a href={project.data.repo} target="_blank" rel="noopener">{i['tutorials.emptyLink']}</a>
+              {i['tutorials.emptySuffix']}
+            </>
+          )}
+        </p>
+      )
+    }
+
+    <p class="back"><a href={projectHref}>← {i['tutorials.backToProject']} {project.data.title}</a></p>
+  </section>
+</Base>

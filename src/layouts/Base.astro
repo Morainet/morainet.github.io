@@ -2,26 +2,43 @@
 import '../styles/global.css'
 import Nav from '../components/Nav.astro'
 import Footer from '../components/Footer.astro'
+import { t, type Locale } from '../i18n/ui'
 
 interface Props {
   title?: string
   description?: string
 }
 
+// 语言由 Astro i18n 路由(/en/ 前缀)自动判定,默认中文
+const locale = (Astro.currentLocale as Locale | undefined) ?? 'zh'
+const i = t(locale)
+
 const {
   title,
-  description = 'Morainet 项目介绍平台 —— 组织内各项目的详细介绍、技术栈与进展。',
+  description = i['site.description'],
 } = Astro.props
 
 // 单项目独立构建时(scripts/build-project.mjs)为 true
 const standalone = Boolean(process.env.PROJECT_SLUG)
 
 const siteName = 'Morainet'
-const fullTitle = title ? `${title} · ${siteName}` : `${siteName} · 项目介绍`
+const fullTitle = title ? `${title} · ${siteName}` : `${siteName} · ${i['site.tagline']}`
 const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site) : Astro.url
+
+// hreflang 备选页(整站模式且为目录型页面时输出;404.html 等 file 型页面跳过)
+const isDirPage = !Astro.url.pathname.endsWith('.html')
+const zhPath = Astro.url.pathname.replace(/^\/en/, '')
+const enPath = `/en${zhPath}`
+const alternates = !standalone && isDirPage && Astro.site
+  ? [
+      { hreflang: 'zh', href: new URL(zhPath, Astro.site).href },
+      { hreflang: 'en', href: new URL(enPath, Astro.site).href },
+      { hreflang: 'x-default', href: new URL(zhPath, Astro.site).href },
+    ]
+  : []
 ---
 <!doctype html>
-<html lang="zh-CN">
+<html lang={locale === 'en' ? 'en' : 'zh-CN'}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -37,6 +54,7 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site) : Astro.u
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    {alternates.map((a) => <link rel="alternate" hreflang={a.hreflang} href={a.href} />)}
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />

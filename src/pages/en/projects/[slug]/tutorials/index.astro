@@ -1,0 +1,23 @@
+---
+// 项目教程列表页(英文,/en/projects/<slug>/tutorials/)。
+import { getProjects, getTutorials } from '../../../../../lib/i18n'
+import TutorialsView from '../../../../../components/views/TutorialsView.astro'
+
+export async function getStaticPaths() {
+  // 单项目独立构建仅产出中文站,跳过英文页
+  if (process.env.PROJECT_SLUG) return []
+  const [all, tutorials] = await Promise.all([getProjects('en'), getTutorials('en')])
+  return all.map((project) => ({
+    params: { slug: project.id },
+    props: {
+      project,
+      tutorials: tutorials
+        .filter((x) => x.id.startsWith(`${project.id}/`))
+        .sort((a, b) => a.data.order - b.data.order),
+    },
+  }))
+}
+
+const { project, tutorials } = Astro.props
+---
+<TutorialsView locale="en" project={project} tutorials={tutorials} />

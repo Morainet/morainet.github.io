@@ -1,0 +1,21 @@
+---
+// 项目详情视图:/projects/<slug>/ 与 /en/projects/<slug>/ 共用。
+import { render } from 'astro:content'
+import Base from '../../layouts/Base.astro'
+import ProjectPage from '../ProjectPage.astro'
+import type { Locale } from '../../i18n/ui'
+
+interface Props {
+  locale: Locale
+  project: import('astro:content').CollectionEntry<'projects'>
+  all: import('astro:content').CollectionEntry<'projects'>[]
+}
+
+const { locale, project, all } = Astro.props
+const { Content } = await render(project)
+---
+<Base title={project.data.title} description={project.data.description}>
+  <ProjectPage project={project} all={all} locale={locale}>
+    <Content />
+  </ProjectPage>
+</Base>
