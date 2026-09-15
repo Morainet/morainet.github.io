@@ -200,8 +200,11 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
 
 /* ── Buttons(主站同款:方形 + 等宽大写,实心反色悬停) ────── */
 .btn {
-  display: inline-block;
-  padding: 13px 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 26px;
   border: 1px solid var(--ink);
   background: var(--ink);
   color: var(--paper);
@@ -220,19 +223,30 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
 }
 
 .btn-outline {
-  display: inline-block;
-  padding: 10px 20px;
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 16px;
   border: 1px solid var(--border);
   color: var(--ink);
+  background: transparent;
   border-radius: 1px;
   font-family: var(--mono);
   font-size: 0.72rem;
   font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
 }
-.btn-outline:hover { border-color: var(--ink); color: var(--ink); text-decoration: none; }
+.btn-outline:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+  text-decoration: none;
+}
+
+/* 紧凑实心钮:与 .btn-outline 同排时高度一致(CTA 区等) */
+.btn-sm { min-height: 34px; padding: 0 18px; font-size: 0.72rem; }
 
 /* ── Sections ───────────────────────────────────────────── */
 .section { padding: 48px 0; }
@@ -310,7 +324,7 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   gap: 7px;
   font-size: 0.68rem;
   letter-spacing: 0.1em;
-  padding: 3px 10px;
+  padding: 4px 12px;
   border: 1px solid var(--hairline);
   border-radius: 1px;
   font-weight: 500;
@@ -354,6 +368,10 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   font-size: clamp(2rem, 5vw, 2.9rem);
   line-height: 1.1;
 }
+/* 教程页标题层级:低于项目主标题一档 */
+.tutorial-detail h1 {
+  font-size: clamp(1.55rem, 4vw, 2.15rem);
+}
 .project-detail .card-tagline { font-size: 1rem; margin: 4px 0 0; }
 .project-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 0 0 30px; }
 .content { max-width: 760px; }
@@ -391,10 +409,11 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   flex: none;
 }
 
-/* 底部 CTA 区 */
+/* 底部 CTA 区(石油蓝左边线强调) */
 .cta-band {
   margin-top: 48px;
   border: 1px solid var(--border);
+  border-left: 2px solid var(--accent);
   border-radius: 1px;
   background: var(--card);
   padding: 26px 28px;
@@ -481,7 +500,7 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   letter-spacing: 0.08em;
   transition: color 0.2s, border-color 0.2s, background 0.2s;
 }
-.chip:hover { color: var(--ink); border-color: var(--ink); }
+.chip:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
 .chip-active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 .empty { color: var(--ink-mute); }
 
@@ -534,12 +553,12 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .cloud-chip sup { font-size: 0.62rem; margin-left: 4px; color: var(--accent); }
 
 /* ── Project detail blocks ──────────────────────────────── */
-.block { margin-top: 28px; }
+.block { margin-top: 34px; }
 .block h2 {
-  font-size: 1.15rem;
-  margin: 0 0 12px;
-  padding: 0;
-  border: none;
+  font-size: 1.3rem;
+  margin: 0 0 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--hairline);
 }
 .project-desc { max-width: 760px; color: var(--ink-mute); font-size: 1.02rem; margin: 0 0 8px; }
 .highlight-list { max-width: 760px; padding-left: 0; list-style: none; margin: 0; }
@@ -573,9 +592,11 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .proj-nav-item {
   display: flex; flex-direction: column; gap: 3px; padding: 15px 18px;
   border: 1px solid var(--border); border-radius: 1px; min-width: 0; flex: 1;
-  transition: border-color 0.2s;
+  background: var(--card);
+  transition: border-color 0.2s, background 0.2s;
 }
-.proj-nav-item:hover { border-color: var(--ink); text-decoration: none; }
+.proj-nav-item:hover { border-color: var(--accent); background: var(--accent-soft); text-decoration: none; }
+.proj-nav-item:hover .proj-nav-label { color: var(--accent); }
 .proj-nav-item.next { text-align: right; align-items: flex-end; }
 .proj-nav-item.prev { align-items: flex-start; text-align: left; }
 .proj-nav-label {
@@ -587,17 +608,41 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
 }
 .proj-nav-title { font-weight: 600; color: var(--ink); font-size: 0.95rem; }
 
-/* ── Tutorial list(每项目预留的教程页) ─────────────────── */
-.tutorial-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--border); max-width: 760px; }
-.tutorial-item { border-bottom: 1px solid var(--border); }
-.tutorial-item a { display: flex; flex-direction: column; gap: 6px; padding: 18px 4px; }
-.tutorial-item a:hover { text-decoration: none; }
-.tutorial-row { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
-.tutorial-title { font-weight: 600; color: var(--ink); font-size: 1rem; transition: color 0.2s; }
+/* ── Tutorial list(每项目预留的教程页,方框卡片列表) ────── */
+.tutorial-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; max-width: 760px; }
+.tutorial-item a {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 20px;
+  border: 1px solid var(--border);
+  border-radius: 1px;
+  background: var(--card);
+  transition: border-color 0.2s, background 0.2s;
+}
+.tutorial-item a:hover { text-decoration: none; border-color: var(--accent); background: var(--accent-soft); }
+.tutorial-row { display: flex; align-items: baseline; gap: 12px; }
+.tutorial-num {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  flex: none;
+}
+.tutorial-title { font-weight: 600; color: var(--ink); font-size: 1rem; flex: 1; transition: color 0.2s; }
 .tutorial-arrow { font-family: var(--mono); color: var(--ink-mute); transition: color 0.2s, transform 0.2s; }
 .tutorial-item a:hover .tutorial-title { color: var(--accent); }
 .tutorial-item a:hover .tutorial-arrow { color: var(--accent); transform: translateX(3px); }
-.tutorial-desc { color: var(--ink-mute); font-size: 0.88rem; }
+.tutorial-desc { color: var(--ink-mute); font-size: 0.88rem; padding-left: 26px; }
+/* 预留空状态:虚线方框表达"待填充" */
+.tutorial-empty {
+  max-width: 760px;
+  padding: 34px 24px;
+  border: 1px dashed var(--border);
+  border-radius: 1px;
+  text-align: center;
+  color: var(--ink-mute);
+}
 
 /* ── 404 ────────────────────────────────────────────────── */
 .notfound { text-align: center; padding: 72px 20px; }
@@ -618,4 +663,8 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   .hero { padding: 64px 0 40px; }
   .proj-nav { flex-direction: column; }
   .proj-nav-item.next { text-align: left; align-items: flex-start; }
+  .project-head { gap: 14px; }
+  .project-logo { height: 52px; max-width: 150px; }
+  .cta-band { padding: 20px; }
+  .tutorial-desc { padding-left: 0; }
 }

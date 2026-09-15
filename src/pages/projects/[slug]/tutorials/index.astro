@@ -30,7 +30,7 @@ const tutorialHref = (t) => {
 }
 ---
 <Base title={`${project.data.title} 教程`} description={`${project.data.title} 的入门指南与实战教程。`}>
-  <section class="section project-detail">
+  <section class="section project-detail tutorial-detail">
     <header class="project-hero">
       <p class="kicker">{project.data.title} · 教程</p>
       <h1>教程</h1>
@@ -40,10 +40,11 @@ const tutorialHref = (t) => {
     {
       tutorials.length > 0 ? (
         <ol class="tutorial-list">
-          {tutorials.map((t) => (
+          {tutorials.map((t, i) => (
             <li class="tutorial-item">
               <a href={tutorialHref(t)}>
                 <span class="tutorial-row">
+                  <span class="tutorial-num">{String(i + 1).padStart(2, '0')}</span>
                   <span class="tutorial-title">{t.data.title}</span>
                   <span class="tutorial-arrow" aria-hidden="true">→</span>
                 </span>
@@ -53,7 +54,7 @@ const tutorialHref = (t) => {
           ))}
         </ol>
       ) : (
-        <p class="empty">
+        <p class="empty tutorial-empty">
           教程整理中,敬请期待。
           {project.data.repo && (
             <>
