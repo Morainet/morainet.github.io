@@ -8,6 +8,8 @@ import { t, type Locale } from '../i18n/ui'
 interface Props {
   title?: string
   description?: string
+  /** 加宽布局容器(教程等文档式页面,让左侧目录更贴近屏幕左缘) */
+  wide?: boolean
 }
 
 // 语言由 Astro i18n 路由(/en/ 前缀)自动判定,默认中文
@@ -17,6 +19,7 @@ const i = t(locale)
 const {
   title,
   description = i['site.description'],
+  wide = false,
 } = Astro.props
 
 // 单项目独立构建时(scripts/build-project.mjs)为 true
@@ -84,7 +87,7 @@ const alternates = !standalone && isDirPage && Astro.site
   <body>
     <div class="read-progress" aria-hidden="true"></div>
     <Nav standalone={standalone} />
-    <main class="container">
+    <main class:list={['container', { 'container-wide': wide }]}>
       <slot />
     </main>
     <Footer />

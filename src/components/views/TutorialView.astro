@@ -27,6 +27,7 @@ const tutorialHref = (x) =>
   link(rel, pathFor(locale, `projects/${project.id}/tutorials/${x.id.split('/').slice(1).join('/')}/`))
 ---
 <Base
+  wide
   title={`${tutorial.data.title} · ${project.data.title} ${i['tutorials.title']}`}
   description={tutorial.data.description ?? `${project.data.title} ${i['tutorials.title']}:${tutorial.data.title}`}
 >
