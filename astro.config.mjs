@@ -1,4 +1,5 @@
 import { defineConfig } from 'astro/config'
+import sitemap from '@astrojs/sitemap'
 
 // https://astro.build/config
 export default defineConfig({
@@ -14,4 +15,15 @@ export default defineConfig({
     locales: ['zh', 'en'],
     prefixDefaultLocale: false,
   },
+  // sitemap 仅整站构建需要(单项目独立站由部署平台自行收录)
+  integrations: process.env.PROJECT_SLUG
+    ? []
+    : [
+        sitemap({
+          i18n: {
+            defaultLocale: 'zh',
+            locales: { zh: 'zh-CN', en: 'en' },
+          },
+        }),
+      ],
 })
