@@ -3,7 +3,7 @@
 // 文档式布局:左侧为该项目教程目录(当前篇高亮),右侧为正文;上/下篇在同一集合内轮转。
 import { render } from 'astro:content'
 import Base from '../../layouts/Base.astro'
-import { link, relToRoot } from '../../lib/rel'
+import { href } from '../../lib/rel'
 import { pathFor } from '../../lib/i18n'
 import { t, type Locale } from '../../i18n/ui'
 
@@ -20,11 +20,10 @@ interface Props {
 const { locale, project, tutorial, tutorials, prev, next } = Astro.props
 const i = t(locale)
 const { Content } = await render(tutorial)
-const rel = relToRoot(Astro.url.pathname)
-const listHref = link(rel, pathFor(locale, `projects/${project.id}/tutorials/`))
-const projectHref = link(rel, pathFor(locale, `projects/${project.id}/`))
+const listHref = href(pathFor(locale, `projects/${project.id}/tutorials/`))
+const projectHref = href(pathFor(locale, `projects/${project.id}/`))
 const tutorialHref = (x) =>
-  link(rel, pathFor(locale, `projects/${project.id}/tutorials/${x.id.split('/').slice(1).join('/')}/`))
+  href(pathFor(locale, `projects/${project.id}/tutorials/${x.id.split('/').slice(1).join('/')}/`))
 ---
 <Base
   wide

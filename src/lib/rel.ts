@@ -1,26 +1,12 @@
 /**
- * 计算当前页面到站点根目录的相对前缀。
- * 页内链接全部使用相对路径,使构建产物在 file:// 直开(双击 index.html)时也能跳转。
+ * 拼接站点内根绝对链接:href('projects/mcos/') -> '/projects/mcos/'。
  *
- * relToRoot("/")               -> "."
- * relToRoot("/projects/mcos/") -> "../.."
- * relToRoot("/404.html")       -> "."(文件型页面按所在目录计)
+ * 全站链接必须使用根绝对路径,不能改回相对路径:View Transitions 换页时,
+ * 新页面的 <link>/<img> 会按「旧页面所在目录」解析相对路径,跨目录跳转后
+ * 样式表 404、整页无样式(须手动刷新)。绝对路径与页面深度无关,从根本上
+ * 规避该问题;404.html 出现在任意深层路径下也能正确引用资源。
+ * 代价:产物不再支持 file:// 双击直开(部署到 GitHub Pages / Vercel 不受影响)。
  */
-export function relToRoot(pathname: string): string {
-  const clean = pathname.replace(/[^/]+\.html?$/, '')
-  const parts = clean.split('/').filter(Boolean)
-  return parts.length ? parts.map(() => '..').join('/') : '.'
-}
-
-/**
- * 拼接站点内相对链接。目录型目标显式落到 index.html:
- * file:// 协议不会自动补 index.html(会显示目录列表),显式写出让构建产物双击即可导航。
- *
- * link('.', '')              -> './index.html'
- * link('../..', 'projects/mcos/') -> '../../projects/mcos/index.html'
- */
-export function link(rel: string, path: string): string {
-  const dir = path.replace(/\/$/, '')
-  const file = dir === '' ? 'index.html' : `${dir}/index.html`
-  return rel === '.' ? `./${file}` : `${rel}/${file}`
+export function href(path: string): string {
+  return `/${path.replace(/^\//, '')}`
 }

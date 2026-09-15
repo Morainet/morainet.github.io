@@ -305,6 +305,7 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   gap: 18px;
 }
 .card {
+  position: relative; /* 锚定 .card-stretch 覆盖层与 .featured-mark 星标 */
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 24px;

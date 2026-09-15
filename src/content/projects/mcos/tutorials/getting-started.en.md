@@ -45,5 +45,5 @@ Via manifest merge, the SDK automatically brings scheduler/boot receivers, the r
 
 ## Next Steps
 
-- Read the [project introduction](../../index.html) for the big-picture architecture
+- Read the [project introduction](/projects/mcos/) for the big-picture architecture
 - Browse the 12 bilingual design RFCs in the [repository](https://github.com/Morainet/mcos)

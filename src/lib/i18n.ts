@@ -30,21 +30,12 @@ export function pathFor(locale: Locale, path: string): string {
 }
 
 /**
- * 计算当前页在另一语言下的同页地址(相对路径 + 显式 index.html,file:// 可用)。
- * localeHref('/projects/mcos/', 'en')   -> '../../en/projects/mcos/index.html'
- * localeHref('/en/projects/mcos/', 'zh') -> '../projects/mcos/index.html'
+ * 计算当前页在另一语言下的同页地址(根绝对路径,原因见 lib/rel.ts)。
+ * localeHref('/projects/mcos/', 'en')   -> '/en/projects/mcos/'
+ * localeHref('/en/projects/mcos/', 'zh') -> '/projects/mcos/'
  */
 export function localeHref(pathname: string, target: Locale): string {
-  const clean = pathname.replace(/[^/]+\.html?$/, '').replace(/\/$/, '')
+  const clean = pathname.replace(/[^/]+\.html?$/, '')
   const stripped = clean.replace(/^\/en/, '')
-  const targetPath = target === 'en' ? `/en${stripped}` : stripped
-  const fromParts = clean.split('/').filter(Boolean)
-  const toParts = targetPath.split('/').filter(Boolean)
-  let common = 0
-  while (common < fromParts.length && common < toParts.length && fromParts[common] === toParts[common]) {
-    common++
-  }
-  const ups = fromParts.length - common
-  const rel = [...Array.from({ length: ups }, () => '..'), ...toParts.slice(common)].join('/')
-  return `${rel || '.'}/index.html`
+  return target === 'en' ? `/en${stripped}` : stripped || '/'
 }

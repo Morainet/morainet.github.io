@@ -3,7 +3,7 @@
 // 结构:Hero(标语 + CTA)→ 核心特性网格 → 技术栈 → 正文 → 底部 CTA → 上/下篇。
 // 正文 Markdown 通过 <slot /> 传入。
 import type { CollectionEntry } from 'astro:content'
-import { relToRoot, link } from '../lib/rel'
+import { href } from '../lib/rel'
 import { pathFor } from '../lib/i18n'
 import { t, type Locale } from '../i18n/ui'
 
@@ -19,8 +19,7 @@ interface Props {
 const { project, all, standalone = false, locale = 'zh' } = Astro.props
 const i = t(locale)
 const meta = project.data
-const rel = relToRoot(Astro.url.pathname)
-const homeHref = link(rel, pathFor(locale, ''))
+const homeHref = href(pathFor(locale, ''))
 const sorted = [...all].sort((a, b) => a.data.order - b.data.order)
 const index = sorted.findIndex((p) => p.id === project.id)
 const prev = !standalone && index > 0 ? sorted[index - 1] : null
@@ -53,7 +52,7 @@ const statusLabel = i[`status.${meta.status}` as const] ?? meta.status
     <p class="project-desc">{meta.description}</p>
     <div class="project-meta">
       <span class={`status status-${meta.status}`}>{statusLabel}</span>
-      <a class="btn-outline" href={link(rel, pathFor(locale, `projects/${project.id}/tutorials/`))}>{i['project.tutorials']}</a>
+      <a class="btn-outline" href={href(pathFor(locale, `projects/${project.id}/tutorials/`))}>{i['project.tutorials']}</a>
       {meta.repo && <a class="btn-outline" href={meta.repo} target="_blank" rel="noopener">{i['project.repo']} ↗</a>}
       {meta.demo && <a class="btn-outline" href={meta.demo} target="_blank" rel="noopener">{i['project.demo']} ↗</a>}
     </div>
@@ -104,7 +103,7 @@ const statusLabel = i[`status.${meta.status}` as const] ?? meta.status
     (prev || next) && (
       <nav class="proj-nav" data-reveal>
         {prev ? (
-          <a href={link(rel, pathFor(locale, `projects/${prev.id}/`))} class="proj-nav-item prev">
+          <a href={href(pathFor(locale, `projects/${prev.id}/`))} class="proj-nav-item prev">
             <span class="proj-nav-label">{i['project.prev']}</span>
             <span class="proj-nav-title">{prev.data.title}</span>
           </a>
@@ -112,7 +111,7 @@ const statusLabel = i[`status.${meta.status}` as const] ?? meta.status
           <span />
         )}
         {next ? (
-          <a href={link(rel, pathFor(locale, `projects/${next.id}/`))} class="proj-nav-item next">
+          <a href={href(pathFor(locale, `projects/${next.id}/`))} class="proj-nav-item next">
             <span class="proj-nav-label">{i['project.next']}</span>
             <span class="proj-nav-title">{next.data.title}</span>
           </a>

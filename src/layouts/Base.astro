@@ -116,7 +116,9 @@ const alternates = !standalone && isDirPage && Astro.site
           }
         }
       },
-      { threshold: 0.08 },
+      // threshold 0:进入 1px 即触发。比例阈值会让超高元素
+      // (如长正文)即使顶部已在视口内也永远达不到比例而卡在隐藏态
+      { threshold: 0 },
     )
     els.forEach((el) => io.observe(el))
   }

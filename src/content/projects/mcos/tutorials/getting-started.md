@@ -44,5 +44,5 @@ SDK 经 manifest merge 自动带来调度/开机接收器、所需权限与 File
 
 ## 下一步
 
-- 阅读[项目介绍](../../index.html)了解整体架构
+- 阅读[项目介绍](/projects/mcos/)了解整体架构
 - 到[仓库](https://github.com/Morainet/mcos)查看 12 篇中英双语设计文档(RFC)

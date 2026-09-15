@@ -25,5 +25,5 @@ order: 1
 
 ## 下一步
 
-- 阅读[项目介绍](../../index.html)了解技术方向
+- 阅读[项目介绍](/projects/morainet-ai/)了解技术方向
 - 到[仓库](https://github.com/Morainet/morainet-ai)参与贡献

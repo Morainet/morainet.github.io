@@ -1,6 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content'
-import { relToRoot, link } from '../lib/rel'
+import { href } from '../lib/rel'
 import { pathFor } from '../lib/i18n'
 import { t, type Locale } from '../i18n/ui'
 
@@ -11,7 +11,7 @@ interface Props {
 const { project, locale } = Astro.props
 const i = t(locale)
 const meta = project.data
-const href = link(relToRoot(Astro.url.pathname), pathFor(locale, `projects/${project.id}/`))
+const cardHref = href(pathFor(locale, `projects/${project.id}/`))
 // 搜索/筛选用的数据,由首页脚本读取
 const searchText = [meta.title, meta.tagline, meta.description, ...meta.tags].join(' ')
 ---
@@ -23,7 +23,7 @@ const searchText = [meta.title, meta.tagline, meta.description, ...meta.tags].jo
 >
   {meta.featured && <span class="featured-mark" title={i['card.featuredTitle']}>⭐</span>}
   <div class="card-icon">{meta.icon}</div>
-  <h3><a href={href}>{meta.title}</a></h3>
+  <h3><a href={cardHref}>{meta.title}</a></h3>
   <p class="card-tagline">{meta.tagline}</p>
   <p class="card-desc">{meta.description}</p>
   <div class="tags">
@@ -34,5 +34,5 @@ const searchText = [meta.title, meta.tagline, meta.description, ...meta.tags].jo
     {meta.repo && <a href={meta.repo} target="_blank" rel="noopener">{i['card.repo']} ↗</a>}
   </div>
   <!-- 整卡可点击:覆盖层拉伸链接,仓库外链通过 z-index 保持独立可点 -->
-  <a class="card-stretch" href={href} aria-label={`${i['card.viewDetail']} ${meta.title} ${i['card.viewDetailSuffix']}`}></a>
+  <a class="card-stretch" href={cardHref} aria-label={`${i['card.viewDetail']} ${meta.title} ${i['card.viewDetailSuffix']}`}></a>
 </article>
