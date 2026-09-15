@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css'
+import { ClientRouter } from 'astro:transitions'
 import Nav from '../components/Nav.astro'
 import Footer from '../components/Footer.astro'
 import { t, type Locale } from '../i18n/ui'
@@ -59,17 +60,24 @@ const alternates = !standalone && isDirPage && Astro.site
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonical} />
+    <!-- 页面间平滑过渡(浏览器不支持时自动退回普通跳转) -->
+    <ClientRouter />
     <script is:inline>
-      // 首屏绘制前设置主题,避免闪烁:用户手动选择优先,否则跟随系统
+      // 首屏绘制前设置主题,避免闪烁:用户手动选择优先,否则跟随系统。
+      // View Transitions 换页会替换 <html> 属性,after-swap 时重新应用。
       ;(function () {
-        var saved = localStorage.getItem('morainet-theme')
-        var theme =
-          saved === 'light' || saved === 'dark'
-            ? saved
-            : window.matchMedia('(prefers-color-scheme: dark)').matches
-              ? 'dark'
-              : 'light'
-        document.documentElement.dataset.theme = theme
+        function applyTheme() {
+          var saved = localStorage.getItem('morainet-theme')
+          var theme =
+            saved === 'light' || saved === 'dark'
+              ? saved
+              : window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light'
+          document.documentElement.dataset.theme = theme
+        }
+        applyTheme()
+        document.addEventListener('astro:after-swap', applyTheme)
       })()
     </script>
   </head>
@@ -81,3 +89,32 @@ const alternates = !standalone && isDirPage && Astro.site
     <Footer />
   </body>
 </html>
+
+<script>
+  // 滚动渐显:进入视口的 [data-reveal] 元素过渡显现(渐进增强)。
+  // astro:page-load 在首次加载与每次 View Transition 导航后都会触发,
+  // 每次对当前 DOM 重新观察即可;无 JS / 减弱动效偏好时不隐藏内容。
+  function initReveal() {
+    const els = document.querySelectorAll('[data-reveal]:not(.revealed)')
+    if (els.length === 0) return
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reduced || !('IntersectionObserver' in window)) {
+      els.forEach((el) => el.classList.add('revealed'))
+      return
+    }
+    document.documentElement.classList.add('reveal-armed')
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('revealed')
+            io.unobserve(entry.target)
+          }
+        }
+      },
+      { threshold: 0.08 },
+    )
+    els.forEach((el) => io.observe(el))
+  }
+  document.addEventListener('astro:page-load', initReveal)
+</script>

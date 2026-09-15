@@ -35,13 +35,13 @@ const tutorialHref = (x) =>
       {tutorial.data.description && <p class="project-desc">{tutorial.data.description}</p>}
     </header>
 
-    <div class="content">
+    <div class="content" data-reveal>
       <Content />
     </div>
 
     {
       (prev || next) && (
-        <nav class="proj-nav">
+        <nav class="proj-nav" data-reveal>
           {prev ? (
             <a href={tutorialHref(prev)} class="proj-nav-item prev">
               <span class="proj-nav-label">{i['tutorial.prev']}</span>

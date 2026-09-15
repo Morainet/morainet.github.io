@@ -61,7 +61,7 @@ const pageDescription = standaloneProject ? standaloneProject.data.description :
           <a href="#projects" class="btn">{i['home.browse']}</a>
         </section>
 
-        <section class="stats">
+        <section class="stats" data-reveal>
           <div class="stat">
             <span class="stat-num">{all.length}</span>
             <span class="stat-label">{i['home.statProjects']}</span>
@@ -76,7 +76,7 @@ const pageDescription = standaloneProject ? standaloneProject.data.description :
           </div>
         </section>
 
-        <section class="section container">
+        <section class="section container" data-reveal>
           <h2>{i['home.directionsTitle']}</h2>
           <div class="tag-cloud">
             {directions.map(([tag, count]) => (
@@ -88,7 +88,7 @@ const pageDescription = standaloneProject ? standaloneProject.data.description :
           </div>
         </section>
 
-        <section id="projects" class="section container">
+        <section id="projects" class="section container" data-reveal>
           <h2>{i['home.projectsTitle']}</h2>
           <div class="filters">
             <input class="search" type="search" placeholder={i['home.searchPlaceholder']} aria-label={i['home.searchLabel']} />
@@ -116,34 +116,39 @@ const pageDescription = standaloneProject ? standaloneProject.data.description :
 {
   !process.env.PROJECT_SLUG && (
     <script>
-      // 首页项目筛选 + 搜索(纯前端,无框架)
-      const search = document.querySelector<HTMLInputElement>('.search')
-      const chips = [...document.querySelectorAll<HTMLButtonElement>('.tag-filters .chip')]
-      const cards = [...document.querySelectorAll<HTMLElement>('[data-project-card]')]
-      const empty = document.querySelector('[data-filter-empty]')
-      // 第一个 chip 恒为「全部」(文案随语言变化,取值不硬编码)
-      const allTag = chips[0]?.dataset.tag ?? ''
-      let activeTag = allTag
+      // 首页项目筛选 + 搜索(纯前端,无框架)。
+      // astro:page-load 在首次加载与每次 View Transition 导航后触发,
+      // 每次对新 DOM 重新绑定;非首页时元素不存在,直接跳过。
+      document.addEventListener('astro:page-load', () => {
+        const search = document.querySelector<HTMLInputElement>('.search')
+        if (!search) return
+        const chips = [...document.querySelectorAll<HTMLButtonElement>('.tag-filters .chip')]
+        const cards = [...document.querySelectorAll<HTMLElement>('[data-project-card]')]
+        const empty = document.querySelector('[data-filter-empty]')
+        // 第一个 chip 恒为「全部」(文案随语言变化,取值不硬编码)
+        const allTag = chips[0]?.dataset.tag ?? ''
+        let activeTag = allTag
 
-      function applyFilter() {
-        const q = (search?.value ?? '').trim().toLowerCase()
-        let visible = 0
-        for (const card of cards) {
-          const okTag = activeTag === allTag || (card.dataset.tags ?? '').split('|').includes(activeTag)
-          const okQuery = q === '' || (card.dataset.text ?? '').toLowerCase().includes(q)
-          const show = okTag && okQuery
-          card.style.display = show ? '' : 'none'
-          if (show) visible++
+        function applyFilter() {
+          const q = (search?.value ?? '').trim().toLowerCase()
+          let visible = 0
+          for (const card of cards) {
+            const okTag = activeTag === allTag || (card.dataset.tags ?? '').split('|').includes(activeTag)
+            const okQuery = q === '' || (card.dataset.text ?? '').toLowerCase().includes(q)
+            const show = okTag && okQuery
+            card.style.display = show ? '' : 'none'
+            if (show) visible++
+          }
+          empty?.toggleAttribute('hidden', visible > 0)
         }
-        empty?.toggleAttribute('hidden', visible > 0)
-      }
 
-      search?.addEventListener('input', applyFilter)
-      chips.forEach((chip) => {
-        chip.addEventListener('click', () => {
-          activeTag = chip.dataset.tag ?? allTag
-          chips.forEach((c) => c.classList.toggle('chip-active', c === chip))
-          applyFilter()
+        search?.addEventListener('input', applyFilter)
+        chips.forEach((chip) => {
+          chip.addEventListener('click', () => {
+            activeTag = chip.dataset.tag ?? allTag
+            chips.forEach((c) => c.classList.toggle('chip-active', c === chip))
+            applyFilter()
+          })
         })
       })
     </script>

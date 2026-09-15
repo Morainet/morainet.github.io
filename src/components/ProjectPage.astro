@@ -61,7 +61,7 @@ const statusLabel = i[`status.${meta.status}` as const] ?? meta.status
 
   {
     meta.highlights.length > 0 && (
-      <section class="block">
+      <section class="block" data-reveal>
         <h2>{i['project.highlights']}</h2>
         <ol class="feature-grid">
           {meta.highlights.map((h, idx) => (
@@ -77,7 +77,7 @@ const statusLabel = i[`status.${meta.status}` as const] ?? meta.status
 
   {
     meta.tech.length > 0 && (
-      <section class="block">
+      <section class="block" data-reveal>
         <h2>{i['project.tech']}</h2>
         <div class="tech-badges">
           {meta.tech.map((x) => (
@@ -88,11 +88,11 @@ const statusLabel = i[`status.${meta.status}` as const] ?? meta.status
     )
   }
 
-  <div class="content">
+  <div class="content" data-reveal>
     <slot />
   </div>
 
-  <aside class="cta-band">
+  <aside class="cta-band" data-reveal>
     <p class="cta-title">{i['project.ctaTitle']}</p>
     <div class="cta-actions">
       {meta.repo && <a class="btn btn-sm" href={meta.repo} target="_blank" rel="noopener">{i['project.repo']} ↗</a>}
@@ -102,7 +102,7 @@ const statusLabel = i[`status.${meta.status}` as const] ?? meta.status
 
   {
     (prev || next) && (
-      <nav class="proj-nav">
+      <nav class="proj-nav" data-reveal>
         {prev ? (
           <a href={link(rel, pathFor(locale, `projects/${prev.id}/`))} class="proj-nav-item prev">
             <span class="proj-nav-label">{i['project.prev']}</span>

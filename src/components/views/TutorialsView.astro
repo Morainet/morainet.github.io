@@ -32,7 +32,7 @@ const tutorialHref = (x) => {
 
     {
       tutorials.length > 0 ? (
-        <ol class="tutorial-list">
+        <ol class="tutorial-list" data-reveal>
           {tutorials.map((x, idx) => (
             <li class="tutorial-item">
               <a href={tutorialHref(x)}>
@@ -47,7 +47,7 @@ const tutorialHref = (x) => {
           ))}
         </ol>
       ) : (
-        <p class="empty tutorial-empty">
+        <p class="empty tutorial-empty" data-reveal>
           {i['tutorials.empty']}
           {project.data.repo && (
             <>

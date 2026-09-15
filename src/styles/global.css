@@ -47,6 +47,7 @@ body {
   background: var(--paper);
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* 装饰性模糊光斑(主站同款语言) */
@@ -108,6 +109,7 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   background: var(--header-bg);
   backdrop-filter: blur(12px);
   z-index: 10;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 .nav { display: flex; align-items: center; justify-content: space-between; height: 60px; }
 .brand {
@@ -168,7 +170,7 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   color: var(--ink-mute);
   cursor: pointer;
   line-height: 0;
-  transition: color 0.2s, background 0.2s;
+  transition: color 0.2s, background 0.2s, transform 0.15s;
 }
 .nav-icon:hover { color: var(--ink); background: var(--accent-soft); text-decoration: none; }
 .nav-icon svg { width: 17px; height: 17px; }
@@ -187,7 +189,7 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   font-weight: 500;
   letter-spacing: 0.08em;
   color: var(--ink-mute);
-  transition: color 0.2s, border-color 0.2s, background 0.2s;
+  transition: color 0.2s, border-color 0.2s, background 0.2s, transform 0.15s;
 }
 .lang-switch:hover {
   color: var(--accent);
@@ -241,7 +243,7 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   font-weight: 600;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  transition: background 0.2s, color 0.2s;
+  transition: background 0.2s, color 0.2s, transform 0.15s;
 }
 .btn:hover {
   background: transparent;
@@ -263,7 +265,7 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  transition: border-color 0.2s, color 0.2s, background 0.2s;
+  transition: border-color 0.2s, color 0.2s, background 0.2s, transform 0.15s;
 }
 .btn-outline:hover {
   border-color: var(--accent);
@@ -297,9 +299,13 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   border-radius: var(--radius-lg);
   padding: 24px;
   background: var(--card);
-  transition: border-color 0.2s, transform 0.2s;
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s, background-color 0.3s;
 }
-.card:hover { border-color: var(--ink); transform: translateY(-2px); }
+.card:hover {
+  border-color: var(--ink);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px -18px rgba(21, 25, 28, 0.3);
+}
 .card-icon { font-size: 1.7rem; margin-bottom: 10px; }
 .card h3 { margin: 0 0 6px; font-size: 1.15rem; letter-spacing: -0.01em; }
 .card h3 a { color: var(--ink); }
@@ -525,7 +531,7 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   cursor: pointer;
   font-size: 0.72rem;
   letter-spacing: 0.08em;
-  transition: color 0.2s, border-color 0.2s, background 0.2s;
+  transition: color 0.2s, border-color 0.2s, background 0.2s, transform 0.15s;
 }
 .chip:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
 .chip-active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
@@ -696,4 +702,64 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   .project-logo { height: 52px; max-width: 150px; }
   .cta-band { padding: 20px; }
   .tutorial-desc { padding-left: 0; }
+}
+
+/* ── 动效 ─────────────────────────────────────────────────
+   四层:页面过渡(View Transitions)/ 首屏入场 / 滚动渐显 / 微交互。
+   全部尊重 prefers-reduced-motion,无 JS 时内容不隐藏。 */
+
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* 首屏元素错峰入场(hero / 项目头) */
+@media (prefers-reduced-motion: no-preference) {
+  .hero > *,
+  .project-hero > * {
+    animation: rise-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .hero > :nth-child(2) { animation-delay: 0.07s; }
+  .hero > :nth-child(3) { animation-delay: 0.14s; }
+  .hero > :nth-child(4) { animation-delay: 0.21s; }
+  .project-hero > :nth-child(2) { animation-delay: 0.06s; }
+  .project-hero > :nth-child(3) { animation-delay: 0.12s; }
+  .project-hero > :nth-child(4) { animation-delay: 0.18s; }
+  .project-hero > :nth-child(5) { animation-delay: 0.24s; }
+}
+
+/* 滚动渐显:JS 检测进入视口后过渡显现。
+   仅在 html.reveal-armed(JS 已就绪)时才隐藏,保证无 JS 环境可见。 */
+html.reveal-armed [data-reveal] {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+html.reveal-armed [data-reveal].revealed {
+  opacity: 1;
+  transform: none;
+}
+
+/* 微交互:按钮 / 图标 / 筛选片的按压下沉 */
+.btn:active,
+.chip:active,
+.lang-switch:active,
+.nav-icon:active {
+  transform: translateY(1px);
+}
+
+/* View Transitions:减弱动效偏好时直接切换,不做过渡 */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+  html.reveal-armed [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }
