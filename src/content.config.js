@@ -12,9 +12,13 @@ const projects = defineCollection({
     // 用目录名(而非文件名)作为 slug:quill/index.md -> quill
     generateId: ({ entry }) => entry.split('/')[0],
   }),
-  schema: z.object({
+  // image() 由 Astro 注入,用于声明图片型字段(构建期处理与校验)
+  schema: ({ image }) =>
+    z.object({
     /** 项目名 */
     title: z.string(),
+    /** 项目 logo(可选,经构建管线优化;详情页 Hero 处展示,替代 emoji 图标) */
+    logo: image().optional(),
     /** 卡片图标(emoji) */
     icon: z.string().default('📦'),
     /** 一句话简介 */
@@ -40,4 +44,28 @@ const projects = defineCollection({
   }),
 })
 
-export const collections = { projects }
+// 教程集合:src/content/projects/<slug>/tutorials/*.md
+// 教程归属所在项目目录,页面路径为 /projects/<slug>/tutorials/<名称>/。
+// generateId 形如 "mcos/getting-started"(去掉 tutorials/ 目录层与扩展名),
+// 首段即项目 slug,用于把教程挂到对应项目下。
+const tutorials = defineCollection({
+  loader: glob({
+    pattern: '*/tutorials/**/*.md',
+    base: './src/content/projects',
+    generateId: ({ entry }) => {
+      const parts = entry.split('/')
+      parts.splice(1, 1) // 去掉 tutorials/ 目录层
+      return parts.join('/').replace(/\.md$/, '')
+    },
+  }),
+  schema: z.object({
+    /** 教程标题 */
+    title: z.string(),
+    /** 一句话简介,教程列表页展示 */
+    description: z.string().optional(),
+    /** 排序,越小越靠前 */
+    order: z.number().default(99),
+  }),
+})
+
+export const collections = { projects, tutorials }

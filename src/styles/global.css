@@ -340,6 +340,14 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
 }
 .project-head { display: flex; align-items: center; gap: 18px; margin-bottom: 16px; }
 .project-icon { font-size: 2.8rem; }
+/* 项目 logo:固定高度按原比例缩放,不随正文全宽拉伸 */
+.project-logo {
+  height: 72px;
+  width: auto;
+  max-width: 200px;
+  object-fit: contain;
+  flex: none;
+}
 .project-detail h1 {
   margin: 0;
   letter-spacing: -0.02em;
@@ -578,6 +586,18 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   color: var(--ink-mute);
 }
 .proj-nav-title { font-weight: 600; color: var(--ink); font-size: 0.95rem; }
+
+/* ── Tutorial list(每项目预留的教程页) ─────────────────── */
+.tutorial-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--border); max-width: 760px; }
+.tutorial-item { border-bottom: 1px solid var(--border); }
+.tutorial-item a { display: flex; flex-direction: column; gap: 6px; padding: 18px 4px; }
+.tutorial-item a:hover { text-decoration: none; }
+.tutorial-row { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
+.tutorial-title { font-weight: 600; color: var(--ink); font-size: 1rem; transition: color 0.2s; }
+.tutorial-arrow { font-family: var(--mono); color: var(--ink-mute); transition: color 0.2s, transform 0.2s; }
+.tutorial-item a:hover .tutorial-title { color: var(--accent); }
+.tutorial-item a:hover .tutorial-arrow { color: var(--accent); transform: translateX(3px); }
+.tutorial-desc { color: var(--ink-mute); font-size: 0.88rem; }
 
 /* ── 404 ────────────────────────────────────────────────── */
 .notfound { text-align: center; padding: 72px 20px; }

@@ -2,13 +2,11 @@
 import { getCollection, render } from 'astro:content'
 import Base from '../../layouts/Base.astro'
 import ProjectPage from '../../components/ProjectPage.astro'
+import { onlyStandalone } from '../../lib/standalone'
 
 export async function getStaticPaths() {
   const all = await getCollection('projects')
-  // 单项目独立构建时只产出该项目页,其余页面照常跳过
-  const only = process.env.PROJECT_SLUG
-  const list = only ? all.filter((p) => p.id === only) : all
-  return list.map((project) => ({ params: { slug: project.id }, props: { project, all } }))
+  return onlyStandalone(all).map((project) => ({ params: { slug: project.id }, props: { project, all } }))
 }
 
 const { project, all } = Astro.props

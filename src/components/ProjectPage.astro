@@ -26,7 +26,19 @@ const next = !standalone && index < sorted.length - 1 ? sorted[index + 1] : null
   <header class="project-hero">
     <p class="kicker">Morainet · 开源项目</p>
     <div class="project-head">
-      <div class="project-icon">{meta.icon}</div>
+      {
+        meta.logo ? (
+          <img
+            class="project-logo"
+            src={meta.logo.src}
+            width={meta.logo.width}
+            height={meta.logo.height}
+            alt={`${meta.title} logo`}
+          />
+        ) : (
+          <div class="project-icon">{meta.icon}</div>
+        )
+      }
       <div>
         <h1>{meta.title}</h1>
         <p class="card-tagline">{meta.tagline}</p>
@@ -35,6 +47,7 @@ const next = !standalone && index < sorted.length - 1 ? sorted[index + 1] : null
     <p class="project-desc">{meta.description}</p>
     <div class="project-meta">
       <span class={`status status-${meta.status}`}>{meta.status}</span>
+      <a class="btn-outline" href={link(rel, `projects/${project.id}/tutorials/`)}>教程</a>
       {meta.repo && <a class="btn-outline" href={meta.repo} target="_blank" rel="noopener">查看仓库 ↗</a>}
       {meta.demo && <a class="btn-outline" href={meta.demo} target="_blank" rel="noopener">在线演示 ↗</a>}
     </div>

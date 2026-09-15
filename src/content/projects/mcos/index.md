@@ -1,6 +1,7 @@
 ---
 title: MCOS
 icon: 📱
+logo: ./assets/logo.jpeg
 tagline: 移动命令操作系统 —— 开放的移动命令总线
 description: MCOS 是开源的移动命令总线：AI 只生成命令，Runtime 在权限校验后执法，插件负责执行。模型无关、协议开放，像 HTTP 统一 Web 一样统一移动应用能力。
 status: 活跃
@@ -24,8 +25,6 @@ tech:
   - MCP
   - Maven Central
 ---
-
-![MCOS](./assets/logo.jpeg)
 
 ## 项目介绍
 
