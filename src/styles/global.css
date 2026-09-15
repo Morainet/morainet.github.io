@@ -413,6 +413,62 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .tutorial-detail h1 {
   font-size: clamp(1.55rem, 4vw, 2.15rem);
 }
+
+/* ── 教程文档式布局:左侧目录 + 右侧正文 ─────────────────── */
+.tutorial-layout {
+  display: grid;
+  grid-template-columns: 250px minmax(0, 1fr);
+  gap: 44px;
+  align-items: start;
+}
+.tutorial-sidebar {
+  position: sticky;
+  top: 84px;
+  max-height: calc(100vh - 108px);
+  overflow-y: auto;
+}
+.toc-title {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin: 0 0 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--hairline);
+}
+.toc-title span { color: var(--accent); }
+.toc { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.toc a {
+  display: flex;
+  gap: 9px;
+  align-items: baseline;
+  padding: 7px 12px;
+  border-left: 2px solid transparent;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--ink-mute);
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+.toc a:hover { color: var(--ink); background: var(--accent-soft); text-decoration: none; }
+.toc a.active {
+  border-left-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+  font-weight: 600;
+}
+.toc-num { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; flex: none; }
+.toc-back {
+  display: block;
+  margin-top: 14px;
+  padding: 10px 12px 0;
+  border-top: 1px solid var(--hairline);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--ink-mute);
+}
+.toc-back:hover { color: var(--accent); text-decoration: none; }
 .project-detail .card-tagline { font-size: 1rem; margin: 4px 0 0; }
 .project-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 0 0 30px; }
 .content { max-width: 760px; }
@@ -735,6 +791,27 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .notfound-actions { display: flex; gap: 12px; justify-content: center; margin-top: 24px; }
 
 /* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 880px) {
+  /* 教程目录收为正文上方的横向滚动条 */
+  .tutorial-layout { grid-template-columns: 1fr; gap: 24px; }
+  .tutorial-sidebar { position: static; max-height: none; overflow: visible; }
+  .toc {
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 6px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .toc a {
+    border-left: none;
+    border-bottom: 2px solid transparent;
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+    padding: 6px 10px;
+  }
+  .toc a.active { border-bottom-color: var(--accent); }
+  .toc-back { margin-top: 10px; padding-top: 8px; }
+}
 @media (max-width: 640px) {
   .nav { gap: 12px; }
   .nav-links { gap: 16px; }

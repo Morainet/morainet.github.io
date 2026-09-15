@@ -12,11 +12,11 @@ export async function getStaticPaths() {
       .sort((a, b) => a.data.order - b.data.order)
     return own.map((tutorial, idx) => ({
       params: { slug: project.id, tutorial: tutorial.id.split('/').slice(1).join('/') },
-      props: { project, tutorial, prev: own[idx - 1] ?? null, next: own[idx + 1] ?? null },
+      props: { project, tutorial, tutorials: own, prev: own[idx - 1] ?? null, next: own[idx + 1] ?? null },
     }))
   })
 }
 
-const { project, tutorial, prev, next } = Astro.props
+const { project, tutorial, tutorials, prev, next } = Astro.props
 ---
-<TutorialView locale="zh" project={project} tutorial={tutorial} prev={prev} next={next} />
+<TutorialView locale="zh" project={project} tutorial={tutorial} tutorials={tutorials} prev={prev} next={next} />
