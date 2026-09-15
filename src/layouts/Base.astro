@@ -82,6 +82,7 @@ const alternates = !standalone && isDirPage && Astro.site
     </script>
   </head>
   <body>
+    <div class="read-progress" aria-hidden="true"></div>
     <Nav standalone={standalone} />
     <main class="container">
       <slot />
@@ -117,4 +118,39 @@ const alternates = !standalone && isDirPage && Astro.site
     els.forEach((el) => io.observe(el))
   }
   document.addEventListener('astro:page-load', initReveal)
+</script>
+
+<script>
+  // 内容页增强:标题锚点 + 阅读进度条。
+  // 换页后 DOM 重建,astro:page-load 时对新 DOM 重新执行(两处均幂等)。
+  function initHeadingAnchors() {
+    document.querySelectorAll('.content h2[id], .content h3[id]').forEach((h) => {
+      if (h.querySelector('.anchor-link')) return
+      const a = document.createElement('a')
+      a.className = 'anchor-link'
+      a.href = `#${h.id}`
+      a.setAttribute('aria-label', h.id)
+      a.textContent = '#'
+      h.appendChild(a)
+    })
+  }
+
+  function updateProgress() {
+    const bar = document.querySelector('.read-progress')
+    if (!bar) return
+    const max = document.documentElement.scrollHeight - window.innerHeight
+    const p = max > 0 ? Math.min(window.scrollY / max, 1) : 0
+    bar.style.transform = `scaleX(${p})`
+  }
+
+  let progressBound = false
+  function initContentEnhancements() {
+    initHeadingAnchors()
+    updateProgress()
+    if (progressBound) return
+    // window 不随 View Transition 换页重建,监听器只绑一次
+    progressBound = true
+    window.addEventListener('scroll', () => requestAnimationFrame(updateProgress), { passive: true })
+  }
+  document.addEventListener('astro:page-load', initContentEnhancements)
 </script>

@@ -76,6 +76,10 @@ body::after {
 [data-theme="dark"] body::after { opacity: 0.5; }
 
 ::selection { background: rgba(21, 98, 126, 0.22); }
+[data-theme="dark"] ::selection { background: rgba(111, 179, 205, 0.28); }
+
+/* 锚点落点避开吸顶栏(页内 #projects、正文标题锚点等) */
+[id] { scroll-margin-top: 76px; }
 
 /* 滚动条(主站同款) */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
@@ -250,6 +254,10 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   color: var(--ink);
   text-decoration: none;
 }
+/* 实心钮内的方向箭头(如「浏览项目 ↓」):悬停时顺势下滑 */
+.btn { gap: 10px; }
+.btn-arrow { transition: transform 0.2s; }
+.btn:hover .btn-arrow { transform: translateY(3px); }
 
 .btn-outline {
   display: inline-flex;
@@ -476,6 +484,29 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   font-size: 1.3rem;
   border-bottom: 1px solid var(--hairline);
 }
+.content h3 { margin: 26px 0 10px; font-size: 1.08rem; }
+/* 标题锚点(由脚本注入):悬停浮现,触屏常显半透明 */
+.anchor-link {
+  margin-left: 10px;
+  color: var(--accent);
+  font-weight: 500;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.content h2:hover .anchor-link,
+.content h3:hover .anchor-link,
+.anchor-link:focus-visible { opacity: 1; }
+.anchor-link:hover { text-decoration: none; }
+@media (hover: none) {
+  .anchor-link { opacity: 0.4; }
+}
+/* 跳转落点短暂高亮,提示到达位置 */
+@keyframes target-flash {
+  from { background-color: var(--accent-soft); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .content :target { animation: target-flash 1.8s ease-out; }
+}
 .content code {
   font-family: var(--mono);
   font-size: 0.85em;
@@ -518,8 +549,13 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   font-size: 0.95rem;
   font-family: var(--mono);
   margin-bottom: 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
-.search:focus { outline: none; border-color: var(--accent); }
+.search:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
 .search::placeholder { color: var(--ink-mute); }
 .tag-filters { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip {
@@ -536,6 +572,13 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .chip:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
 .chip-active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 .empty { color: var(--ink-mute); }
+/* 筛选无结果空态:与教程空态一致的虚线方框 */
+.empty[data-filter-empty] {
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 26px 20px;
+  text-align: center;
+}
 
 /* ── Footer ─────────────────────────────────────────────── */
 .site-footer {
@@ -707,6 +750,20 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
 /* ── 动效 ─────────────────────────────────────────────────
    四层:页面过渡(View Transitions)/ 首屏入场 / 滚动渐显 / 微交互。
    全部尊重 prefers-reduced-motion,无 JS 时内容不隐藏。 */
+
+/* 阅读进度条:无 JS 时 scaleX(0) 不可见 */
+.read-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  z-index: 20;
+  pointer-events: none;
+}
 
 @keyframes rise-in {
   from { opacity: 0; transform: translateY(14px); }
